@@ -46,7 +46,7 @@ func newReconciler(mgr manager.Manager) (*ReconcileDashboard, declarative.LabelM
 
 	srcLabels := declarative.SourceLabel(mgr.GetScheme())
 
-	r.Reconciler.Init(mgr, &api.Dashboard{}, "dashboard",
+	err := r.Reconciler.Init(mgr, &api.Dashboard{}, "dashboard",
 		declarative.WithObjectTransform(declarative.AddLabels(labels)),
 		declarative.WithOwner(declarative.SourceAsOwner),
 		declarative.WithLabels(srcLabels),
@@ -54,7 +54,12 @@ func newReconciler(mgr manager.Manager) (*ReconcileDashboard, declarative.LabelM
 		declarative.WithPreserveNamespace(),
 		declarative.WithManagedApplication(srcLabels),
 		declarative.WithObjectTransform(addon.TransformApplicationFromStatus),
+		declarative.WithApplyPrune(),
 	)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return r, srcLabels
 }
