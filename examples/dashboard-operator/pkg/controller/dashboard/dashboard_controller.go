@@ -24,6 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 	api "sigs.k8s.io/kubebuilder-declarative-pattern/examples/dashboard-operator/pkg/apis/addons/v1alpha1"
+	"sigs.k8s.io/kubebuilder-declarative-pattern/pkg/patterns/addon"
 	"sigs.k8s.io/kubebuilder-declarative-pattern/pkg/patterns/addon/pkg/status"
 	"sigs.k8s.io/kubebuilder-declarative-pattern/pkg/patterns/declarative"
 )
@@ -50,6 +51,8 @@ func Add(mgr manager.Manager) error {
 		declarative.WithLabels(srcLabels),
 		declarative.WithStatus(status.NewBasic(mgr.GetClient())),
 		declarative.WithPreserveNamespace(),
+		declarative.WithManagedApplication(srcLabels),
+		declarative.WithObjectTransform(addon.TransformApplicationFromStatus),
 	)
 
 	c, err := controller.New("dashboard-controller", mgr, controller.Options{Reconciler: r})
