@@ -36,7 +36,8 @@ type ReconcileDashboard struct {
 	declarative.Reconciler
 }
 
-func Add(mgr manager.Manager) error {
+// newReconciler returns a initialized ReconcileDashboard
+func newReconciler(mgr manager.Manager) (*ReconcileDashboard, declarative.LabelMaker) {
 	labels := map[string]string{
 		"k8s-app": "kubernetes-dashboard",
 	}
@@ -54,6 +55,12 @@ func Add(mgr manager.Manager) error {
 		declarative.WithManagedApplication(srcLabels),
 		declarative.WithObjectTransform(addon.TransformApplicationFromStatus),
 	)
+
+	return r, srcLabels
+}
+
+func Add(mgr manager.Manager) error {
+	r, srcLabels := newReconciler(mgr)
 
 	c, err := controller.New("dashboard-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
