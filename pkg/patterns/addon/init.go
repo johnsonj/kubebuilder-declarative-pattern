@@ -50,7 +50,7 @@ func Init() {
 
 	declarative.Options.Begin = append(declarative.Options.Begin, declarative.WithObjectTransform(func(ctx context.Context, obj declarative.DeclarativeObject, m *manifest.Objects) error {
 		if *privateRegistry != "" || *imagePullSecret != "" {
-			log.Info("applying private reigstry options")
+			log.Info("applying private registry options")
 			return declarative.ImageRegistryTransform(*privateRegistry, *imagePullSecret)(ctx, obj, m)
 		}
 		return nil
